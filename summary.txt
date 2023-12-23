@@ -1,0 +1,19 @@
+The NBA Network		
+	by Ankit Das, Yoni Nachmany, and Evan Tao
+
+Project Description
+	In our project, we analyzed the network of NBA players, where there is an edge between two players (who represent vertices) if they have played with each other in the last 10 years (from 2005-2006 to 2014-2015). We used information retrieval via JSoup to gather our data.
+	We were interested in seeing if this network exhibited the properties of large networks - small diameter, one connected component, high clustering coefficient, and heavy-tailed degree distribution. After using Gephi to do this analysis and get our overall graph statistics, we looked at two relationships regarding the players: degree and number of teams played for as well as degree and career duration. We hypothesized a correlation between these attributes, and we were keen to test our hypotheses.
+	Through writing to a file and creating visualizations we were able to test our hypotheses and verify our initial inclinations.
+
+Categories
+	Graph and graph algorithms
+	Document Search (aka Information Retrieval)
+
+Work Breakdown
+	JSoup code for gathering data - Ankit
+	Gephi - Yoni
+	Player relationship graphs - Evan
+	Analysis - team effort
+
+
