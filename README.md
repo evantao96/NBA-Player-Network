@@ -1,6 +1,6 @@
 # NBA Network Analysis #
 
-## Team ## 
+## Contributors ## 
 
 Ankit Das - Yoni Nachmany - Evan Tao
 
