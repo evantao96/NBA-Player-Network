@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,14 +36,15 @@ public class AnswerGetter {
 	public void getTeams() {
 		System.out.println("Getting teams...");
 		try {
-			Document doc = Jsoup.connect(URL + "/teams/").get();
-			Elements table = doc.getElementsByClass("full_table");
+			Document doc = Jsoup.connect(URL + "/teams/").ignoreHttpErrors(true).timeout(0).get();
+			Element active = doc.getElementById("all_teams_active");
+			Elements table = active.getElementsByClass("full_table");
 			Elements rows = table.select("tr");
 			Elements teams = rows.select("a");
 			for (Element e : teams) {
 				String team = e.attr("href");
 				getRosters(team);
-			}
+			} 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -53,9 +55,9 @@ public class AnswerGetter {
 	 * Retrieves the URL for the year of each team, and passes it to getPlayers
 	 */
 	public void getRosters(String team) {
-		System.out.println("Getting rosters...");
+		System.out.println("Getting " + team +  " roster");
 		try {
-			Document doc = Jsoup.connect(URL + team).get();
+			Document doc = Jsoup.connect(URL + team).ignoreHttpErrors(true).timeout(0).get();
 			Elements table = doc.getElementsByClass("active");
 			Elements year = table.select("a");
 			for (Element e : year) {
@@ -88,7 +90,7 @@ public class AnswerGetter {
 		System.out.println("Getting players...");
 		List<String> players = new LinkedList<String>();
 		try {
-			Document doc = Jsoup.connect(URL + s).get();
+			Document doc = Jsoup.connect(URL + s).ignoreHttpErrors(true).timeout(0).get();
 			Elements table = doc.getElementsByClass("table_container");
 			for (Element e : table) {
 				if (e.text().contains("College")) {
@@ -138,43 +140,44 @@ public class AnswerGetter {
 		getPlayerNumTeams(player);
 		if (players.get(player)[1] == null) {
 			try {
-				Document doc = Jsoup.connect(URL + player).get();
+				Document doc = Jsoup.connect(URL + player).ignoreHttpErrors(true).timeout(0).get();
 				Elements table = doc.getAllElements();
 				Elements rows = table.select("p");
 				for (Element e : rows) {
-					if (e.text().contains("Position")) { // get the right
+					String s = e.text();
+					if (s.contains("Position")) { // get the right
 															// paragraph
-						String s = e.text();
 						int posBeg = s.indexOf(":");
 						int posEnd = s.indexOf("▪");
 						// add position attribute
 						players.get(player)[1] = s.substring(posBeg + 2,
 								posEnd - 1);
 						int hndBeg = s.indexOf(":", posEnd);
-						int hndEnd = s.indexOf("Height");
 						// add left or right handed attribute
-						players.get(player)[2] = s.substring(hndBeg + 2,
-								hndEnd - 1);
-						int htBeg = s.indexOf(":", hndEnd);
-						int htEnd = s.indexOf("▪", hndEnd);
+						players.get(player)[2] = s.substring(hndBeg + 2);
+					}
+					if (s.contains("cm")) { // get the next paragraph 
+						int htBeg = s.indexOf("("); 
+						int htEnd = s.indexOf(")");
 						// add height attribute
-						players.get(player)[3] = s.substring(htBeg + 2,
-								htEnd - 1);
-						int wtBeg = s.indexOf(":", htEnd);
-						int wtEnd = s.indexOf(".", htEnd);
+						players.get(player)[3] = s.substring(htBeg + 1, htEnd);
+					}
+					if (s.contains("lb")) {
+						int wtBeg = s.indexOf("(");
+						int wtEnd = s.indexOf(")"); 
 						// add weight attribute
-						players.get(player)[4] = s.substring(wtBeg + 2, wtEnd);
-						if (s.contains("Experience")) {
-							int eBeg = s.indexOf("Experience");
-							int eEnd = s.indexOf("year", eBeg);
-							/*
-							 * add experience attribute (in years) this
-							 * information is not available for some, so
-							 * experience will remain 'null'
-							 */
-							players.get(player)[5] = s.substring(eBeg + 12,
-									eEnd);
-						}
+						players.get(player)[4] = s.substring(wtBeg + 1, wtEnd); 
+					}
+					if (s.contains("Experience")) {
+						int eBeg = s.indexOf("Experience");
+						int eEnd = s.indexOf("year", eBeg);
+						/*
+						 * add experience attribute (in years) this
+						 * information is not available for some, so
+						 * experience will remain 'null'
+						 */
+						players.get(player)[5] = s.substring(eBeg + 12,
+								eEnd);
 					}
 				}
 			} catch (IOException e) {
@@ -186,7 +189,7 @@ public class AnswerGetter {
 
 	public void getPlayerName(String player) {
 		try {
-			Document doc = Jsoup.connect(URL + player).get();
+			Document doc = Jsoup.connect(URL + player).ignoreHttpErrors(true).timeout(0).get();
 			Elements table = doc.getAllElements();
 			Elements rows = table.select("h1");
 			for (Element e : rows) {
@@ -204,8 +207,8 @@ public class AnswerGetter {
 	
 	public void getPlayerNumTeams(String player) {
 		try {
-			Document doc = Jsoup.connect(URL + player).get();
-			Elements table = doc.getElementsByClass("no_hover");
+			Document doc = Jsoup.connect(URL + player).ignoreHttpErrors(true).timeout(0).get();
+			Elements table = doc.getElementsByAttributeValueContaining("class", "uni_holder bbr");
 			/*
 			 *  this will get the number of different shirts they have had,
 			 *  so it isn't exactly the number of teams they have played for
