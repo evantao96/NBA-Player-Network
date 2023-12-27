@@ -1,8 +1,10 @@
 # NBA Network Analysis #
 
-## About ##
+## TEAM ## 
 
-Team Members: Ankit Das - Yoni Nachmany - Evan Tao
+Ankit Das - Yoni Nachmany - Evan Tao
+
+## About ##
 
 This project analyzes a network consisting of NBA players connected to each other if they have been teammates in the last 10 years. 
 
