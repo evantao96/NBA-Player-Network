@@ -1,6 +1,6 @@
 # NBA Network Analysis #
 
-## TEAM ## 
+## Team ## 
 
 Ankit Das - Yoni Nachmany - Evan Tao
 
