@@ -2,7 +2,7 @@
 
 ## About ##
 
-This project analyzes a network consisting of NBA players connected to each other if they have been teammates in the last 10 years. 
+This project analyzes a network consisting of NBA players connected to each other if they have been teammates in the 2011-2012 or 2012-2013 seasons.
 
 ## Contributors ## 
 
@@ -10,13 +10,14 @@ Ankit Das - Yoni Nachmany - Evan Tao
 
 ## Dependencies ## 
 
-JSoup
+`JSoup 1.17.1`
 
 ## Testing ##
 
+- Compile `javac -cp .:jsoup-1.17.1.jar Main.java`
+- Run `java -cp .:jsoup-1.17.1.jar Main`
+
 ## Conclusions ##
 
-There are 1411 nodes and 31700 edges in this undirected graph. The diameter is a low 3, the clustering coefficient is a relatively high 0.547 and the degree distribution is heavy tailed. All of this matches the atributes of a large-scale network. 
-
-These statistics of the NBA player network do make sense. There are only 30 teams in the NBA and players frequently switch teams; thus, it is expected that the diameter of the network is that of a "small world." Additionally, neighbors of a node are expected to have an edge betwen each other because everyone on a team in a given year forms a completely connected clique. Furthermore, there is a small fraction of players that have played with many more players than average over the course of their careers -- be it through longevity in the league or frequently switching teams. 
+There are 1411 nodes and 31700 edges in this undirected graph. The diameter is a low 3, the clustering coefficient is a relatively high 0.547 and the degree distribution is heavy tailed. This matches the attributes of a large-scale network. 
 
