@@ -2,10 +2,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.io.FileWriter;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,9 +29,13 @@ public class AnswerGetter {
 	 */
 	Map<String, String[]> players = new HashMap<String, String[]>();
 
+	ArrayList<Integer> years; 
 	// instead of hard-coding multiple URLs, we retrieve URL's based on the
 	// parameter given to this method
 
+	public AnswerGetter(ArrayList<Integer> y) {
+		years = y;
+	}
 	/*
 	 * Retrieves the URL for each team, and passes it to getRosters
 	 */
@@ -59,7 +65,7 @@ public class AnswerGetter {
 		} catch (InterruptedException e2) {
 			e2.printStackTrace();
 		}
-		System.out.println("Getting " + team +  " season");
+		System.out.println("Getting " + team +  " season...");
 		try {
 			Document doc = Jsoup.connect(URL + team).get();
 			Element table = doc.getElementById("content");
@@ -73,8 +79,10 @@ public class AnswerGetter {
 					 * the following if statement can be adjusted to get
 						 * whichever years are desired
 						 */
-					if (seasonLink.contains("2013")) {
-						getPlayers(seasonLink);
+					for(int y: years) {
+						if (seasonLink.contains(Integer.toString(y))) {
+							getPlayers(seasonLink);
+						}
 					}
 				}
 			}
@@ -95,42 +103,41 @@ public class AnswerGetter {
 			e2.printStackTrace();
 		}
 		System.out.println("Getting " + season + " players...");
-		List<String> playerList = new LinkedList<String>();
 		try {
+			List<String> roster = new LinkedList<String>();
 			Document doc = Jsoup.connect(URL + season).get();
 			Element table = doc.getElementById("roster");
 			Elements row = table.select("td").select("a");
 			for (Element e : row) {
-				String links = e.attr("href");
-				if (!links.contains("college")) {
-					// playerList.add(links);
-					getPlayerInfo(links);
+				String playerLink = e.attr("href");
+				if (!playerLink.contains("college")) {
+					roster.add(playerLink); 
 				}
+			}
+			for (String s: roster) {
+				addEdges(s, roster);
+				getPlayerInfo(s);
 			}
 		} catch (IOException e) {
 		// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}	
-		// addEdges(playerList);
 
 	/*
 	 * Creates the graph; the input represents a team's roster for one year so
 	 * we add edges between every pair of players
 	 */
-	private void addEdges(List<String> players) {
-		System.out.println("Adding edges...");
-		for (int i = 0; i < players.size(); i++) {
-			if (!edges.containsKey(players.get(i))) {
-				edges.put(players.get(i), new LinkedList<String>());
-			}
-			for (int j = 0; j < players.size(); j++) {
-				if (!edges.get(players.get(i)).contains(players.get(j))) {
-					edges.get(players.get(i)).add(players.get(j));
-					// note that this will add a self-edge
-				}
-			}
+	private void addEdges(String player, List<String> roster) {
+		System.out.println("Adding " + player + " edges...");
+		if (!edges.containsKey(player)) {
+			edges.put(player, new LinkedList<String>());
 		}
+		for (String other: roster) {
+			if (!edges.get(player).contains(other) && !player.equals(other)) {
+				edges.get(player).add(other);
+			}
+		}	
 	}
 
 	/*
@@ -143,20 +150,21 @@ public class AnswerGetter {
 			e2.printStackTrace();
 		}
 		if (!players.containsKey(player)) {
-			System.out.println("Getting " + player + " information...");
 			players.put(player, new String[8]);
-			try {
-				Document doc = Jsoup.connect(URL + player).get();
-				getPlayerName(player, doc); 
-				getPlayerPositionAndHand(player, doc); 
-				getPlayerHeight(player, doc); 
-				getPlayerWeight(player, doc); 
-				getPlayerExperience(player, doc); 
-				getPlayerNumTeams(player, doc);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		}
+		System.out.println("Getting " + player + " information...");
+		try {
+			Document doc = Jsoup.connect(URL + player).get();
+			getPlayerName(player, doc); 
+			getPlayerPositionAndHand(player, doc); 
+			getPlayerHeight(player, doc); 
+			getPlayerWeight(player, doc); 
+			getPlayerExperience(player, doc); 
+			getPlayerNumTeammates(player);
+			getPlayerNumTeams(player, doc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -227,6 +235,12 @@ public class AnswerGetter {
 			}
 		}
 	}
+
+	private void getPlayerNumTeammates(String player) {
+		// add number of teammates 
+		String numTeammates = Integer.toString(edges.get(player).size());
+		players.get(player)[6] = numTeammates;
+	}
 	
 	private void getPlayerNumTeams(String player, Document doc) {
 		Elements table = doc.getElementsByClass("jersey");
@@ -238,7 +252,6 @@ public class AnswerGetter {
 	}
 
 	public void printPlayerInfo() {
-		//getNumTeammates();
 		for (Map.Entry<String, String[]> e : players.entrySet()) {
 			System.out.println("\nName: " + e.getValue()[0] 
 							+ "\nURL: " + e.getKey()
@@ -247,24 +260,22 @@ public class AnswerGetter {
 							+ "\nHeight: " + e.getValue()[3]
 							+ "\nWeight: " + e.getValue()[4] 
 							+ "\nExperience: " + e.getValue()[5] 
-							+ "\nDistinct Teammates: " + e.getValue()[6] 
-							+ "\nDistinct Jerseys: " + e.getValue()[7] + "\n");
-		}
-	}
-
-	private void getNumTeammates() {
-		for (Map.Entry<String, List<String>> e : edges.entrySet()) {
-			String player = e.getKey();
-			String numTeammates = Integer.toString(e.getValue().size());
-			players.get(player)[6] = numTeammates;
+							+ "\nNumber of Teammates: " + e.getValue()[6] 
+							+ "\nNumber of Teams: " + e.getValue()[7] + "\n");
 		}
 	}
 
 	public void printNeighbors(String player) {
-		System.out.println("\nThe following players have played with "
-				+ players.get(player)[0] + ":");
-		for (int i = 0; i < edges.get(player).size(); i++) {
-			System.out.println(players.get(edges.get(player).get(i))[0]);
+		System.out.println("\nThe following players have played with " + player + ":");
+		for (String s: edges.get(player)) {
+			System.out.println(s);
 		}
+	}
+
+	public void writeEdges() {
+		String csv = "~/Downloads/Projects/NBA-Network-Analysis/output.csv";
+		CSVWriter writer = new CSVWriter(new FileWriter(csv)); 
+		writer.writeAll(edges); 
+		writer.close();
 	}
 }
