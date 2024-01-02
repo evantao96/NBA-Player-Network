@@ -15,7 +15,7 @@ Ankit Das - Yoni Nachmany - Evan Tao
 ## Testing ##
 
 - Compile `javac -cp .:jsoup-1.17.1.jar Main.java`
-- Run `java -cp .:jsoup-1.17.1.jar Main`, and then type in the years of whichever seasons you want to include in the network. 
+- Run `java -cp .:jsoup-1.17.1.jar Main`, and then type in the years (i.e. `2012`) of whichever seasons you want to include in the network. 
 
 ## Conclusions ##
 
