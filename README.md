@@ -4,7 +4,7 @@
 
 This project generates the network consisting of NBA players connected to each other if they have been teammates in any of the last 10 years. 
 
-Data was scraped from [Basketball Reference](https://basketballreference.com) via Java's `JSoup` library.
+Data was scraped from [Basketball Reference](https://basketball-reference.com/) via Java's `JSoup` library.
 
 The network was implemented using two data structures: a `HashMap` which maps each player to the players they have ever played with, and a `LinkedList` of players on a team roster in any given year. 
 
