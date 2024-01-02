@@ -6,7 +6,7 @@ This project generates the network consisting of NBA players connected to each o
 
 The network was implemented using two data structures: a `HashMap` which maps each player to the players they have ever played with, and a `LinkedList` of players on a team roster in any given year. 
 
-The network was then loaded onto the data visualization platform Gephi. Gephi was used to get various graph characteristics. 
+The network was then loaded onto the data visualization platform Gephi. Gephi was used to report the network's various characteristics, such as diameter, clustering coefficient and degree distribution. 
 
 ## Contributors ## 
 
