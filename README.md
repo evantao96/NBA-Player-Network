@@ -12,7 +12,7 @@ The network was then loaded onto the data visualization platform Gephi. Gephi wa
 
 ## Contributors ## 
 
-Ankit Das - Yoni Nachmany - Evan Tao
+Evan Tao, Ankit Das, Yoni Nachmany
 
 ## Dependencies ## 
 
