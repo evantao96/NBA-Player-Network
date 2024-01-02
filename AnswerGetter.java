@@ -271,11 +271,4 @@ public class AnswerGetter {
 			System.out.println(s);
 		}
 	}
-
-	public void writeEdges() {
-		String csv = "~/Downloads/Projects/NBA-Network-Analysis/output.csv";
-		CSVWriter writer = new CSVWriter(new FileWriter(csv)); 
-		writer.writeAll(edges); 
-		writer.close();
-	}
 }

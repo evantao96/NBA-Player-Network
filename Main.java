@@ -16,6 +16,5 @@ public class Main {
 		AnswerGetter url = new AnswerGetter(years);
 		url.getTeams();
 		url.printPlayerInfo();
-		// url.printNeighbors("/players/t/teaguje01.html");
 	}
 }
