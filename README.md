@@ -25,9 +25,9 @@ Ankit Das - Yoni Nachmany - Evan Tao
 
 ## Conclusions ##
 
-- There are 1411 nodes and 31700 edges in this undirected graph. 
-- The diameter is a low 3. 
-- The clustering coefficient is a relatively high 0.547. 
+- There are `1411` nodes and `31700` edges in this undirected graph. 
+- The diameter is a low `3.` 
+- The clustering coefficient is a relatively high `0.547.` 
 - The degree distribution is heavy tailed.
 
 ![Degree distribution](./demo_image.png)
