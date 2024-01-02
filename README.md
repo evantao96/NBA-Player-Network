@@ -1,4 +1,4 @@
-# NBA Network Analysis #
+# NBA Player Network #
 
 ## About ##
 
